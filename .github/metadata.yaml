@@ -1,0 +1,8 @@
+# .github/metadata.yaml
+description: "The empty value — a storage-less Empty<Element> type shared across the primitives family."
+topics:
+  - primitives
+  - empty
+homepage: "https://swift-institute.org"
+readme:
+  family: E

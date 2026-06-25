@@ -12,12 +12,24 @@
 /// instead of re-declared per agent (cf. the standard library's `EmptyCollection`, a single
 /// top-level type that is its own iterator).
 ///
-/// `Element` is unconstrained (`~Copyable & ~Escapable`): with no element ever stored or
-/// produced, the copyability and escapability of `Element` are irrelevant.
+/// `Element` is unconstrained (`~Copyable & ~Escapable`). Although `Empty` stores nothing, it
+/// inherits its element's capabilities via the conditional conformances below — `Empty<Int>` is
+/// copyable & escapable, `Empty<MoveOnly>` is move-only — so the empty case composes uniformly
+/// with the one-element case (`Single`) and the rest of the family in generic `~Copyable` /
+/// `~Escapable` contexts.
 public struct Empty<Element: ~Copyable & ~Escapable>: ~Copyable, ~Escapable {
-    /// Construct the empty value. The element type is supplied at the use site:
-    /// `Empty<Element>()`.
+    /// Construct the empty value.
+    ///
+    /// The element type is supplied at the use site: `Empty<Element>()`.
     @inlinable
     @_lifetime(immortal)
     public init() {}
 }
+
+// `Empty` inherits its element's capabilities, matching `Single`, so the empty and one-element
+// cases behave the same way in generic `~Copyable` / `~Escapable` contexts. Each conformance
+// states the orthogonal axis as not-required (`& ~Escapable` / `& ~Copyable`) so it applies
+// regardless of the other capability.
+extension Empty: Copyable where Element: Copyable & ~Escapable {}
+
+extension Empty: Escapable where Element: Escapable & ~Copyable {}
